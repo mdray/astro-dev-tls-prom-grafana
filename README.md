@@ -10,6 +10,8 @@ This repo starts an Astro dev environment and adds the following:
 
 ![Scaling Dashboard](img/scaling.png?raw=true "Scaling Dashboard")
 ![Metrics Big List](img/big-list.png?raw=true "Metrics Big List")
+![Diagram](img/airflow-prometheus-2022-10-24-1120.png?raw=true "Diagram")
+
 
 
 # Instructions 
