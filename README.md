@@ -1,7 +1,7 @@
 # Astro Dev TLS-Prom-Grafana
 
 This repo starts an Astro dev environment and adds the following:
-- Astronomer statsd exporter with Airflow mappings
+- Astronomer statsd exporter with Airflow to Prometheus mappings
 - Prometheus
 - Grafana with a dashboard covering >90% of Airflow metrics
 - Nginx TLS reverse proxy (if you provide a certificate and key)
