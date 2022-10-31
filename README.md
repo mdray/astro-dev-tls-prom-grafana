@@ -38,11 +38,14 @@ WARNING: This might delete any existing Astro dev containers and their volumes (
 
 ```./repave.sh```
 
-Once the script completes. If you have a filesystem symlink from `www-browser` to your web browser executable, you should see new tabs open for multiple Docker services:
+This will init and start an Astro dev environment, add the metrics containers, then restart Astro dev (required to for statsd name resolution). Wait for the script to complete. If you have a filesystem symlink from `www-browser` to your web browser executable, you should see new tabs open for multiple Docker services:
 
 Astro: http://localhost:8080/ 
+
 Astro TLS: https://localhost.your-domain:8443/
+
 Grafana: http://localhost:3000/
+
 Grafana TLS: https://localhost.your-domain:3443/
 
 ## Login
