@@ -34,7 +34,9 @@ Edit the URLs at the end of `repave.sh` to match the DNS name you setup to acces
 
 ## Start
 
-WARNING: This might delete any existing Astro dev containers and their volumes (or others if there are bugs), then create a new Astro dev project and add the statsd, prometheus, and grafana containers.
+WARNING: Read this script before running it. It tries to just delete containers it created but it might do more than that if there are bugs. 
+
+It will create a new Astro dev project, then add the statsd, prometheus, grafana, and nginx+tls containers.
 
 ```./repave.sh```
 
