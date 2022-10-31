@@ -44,6 +44,10 @@ EOF
 
 astro dev start
 
+# Raise Postgresql max_conn from 100 to 200
+pgcontainer=$(docker ps | grep $ASTRODIR | grep postgres | cut -f1 -d' ')
+docker exec -it $pgcontainer sed -i 's/max_connections = 100/max_connections = 200/' /var/lib/postgresql/data/postgresql.conf
+
 cd ..
 
 # network=$(docker inspect $(docker ps | grep scheduler | cut -f1 -d' ') -f "{{json .NetworkSettings.Networks }}" | jq -r '.[] | .NetworkID' )

@@ -24,7 +24,7 @@ docker volume ls | grep -v CONTAINER | egrep $PATTERN | awk '{print $2}' | xargs
 
 rm -fr $ASTRODIR
 
-./start-containers.sh # && ./setup-grafana.sh
+./start-containers.sh
 
 mkdir -p $ASTRODIR && cd $ASTRODIR && astro dev restart && cd -
 
