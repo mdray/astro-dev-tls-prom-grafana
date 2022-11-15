@@ -31,7 +31,7 @@ cp ../simple_wide_dag.py dags
 
 cat > .env <<EOF
 AIRFLOW__METRICS__STATSD_ON=True
-AIRFLOW__METRICS__STATSD_HOST=statsd
+AIRFLOW__METRICS__STATSD_HOST=astro-dev-statsd
 AIRFLOW__METRICS__STATSD_PORT=9125
 AIRFLOW__METRICS__STATSD_PREFIX=airflow
 
@@ -56,7 +56,7 @@ network=$(docker inspect $(docker ps --format {{.Names}} | grep $ASTRODIR | grep
 webserver=$(docker ps --format {{.Names}} | grep webserver-)
 
 
-docker run -d --name statsd \
+docker run -d --name astro-dev-statsd \
   --restart unless-stopped \
   --network $network \
   -p 9102:9102/tcp \
@@ -67,7 +67,7 @@ docker run -d --name statsd \
 docker run -d \
   --restart unless-stopped \
   --network $network \
-  --name prom \
+  --name astro-dev-prom \
   -p 9090:9090 \
   -v $PWD/prometheus.yml:/etc/prometheus/prometheus.yml \
   prom/prometheus
@@ -75,9 +75,17 @@ docker run -d \
 docker run -d -p 3000:3000 \
   --restart unless-stopped \
   --network $network \
-  --name grafana \
+  --name astro-dev-grafana \
   -v $PWD/grafana:/etc/grafana \
   grafana/grafana-oss 
+
+docker run -d -p 8200:8200 \
+  --restart unless-stopped \
+  --network $network \
+  --name astro-dev-vault \
+  --cap-add=IPC_LOCK \
+  -e 'VAULT_DEV_ROOT_TOKEN_ID=root' \
+  vault
 
 sed "s/AIRFLOW-WEBSERVER/$webserver/" < nginx/nginx.conf.template > nginx/nginx.conf
 docker run -d -p 80:80 -p 3443:3443 -p 8443:8443 \
