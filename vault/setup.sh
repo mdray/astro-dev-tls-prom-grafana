@@ -33,9 +33,12 @@ vault write aws/config/root \
     secret_key=$AWS_SECRET_ACCESS_KEY \
     region=$AWS_DEFAULT_REGION
 
+vault write aws/config/lease \
+  lease=60m \
+  lease_max=3h
+
 vault write aws/roles/airflow-dev-role \
     credential_type=iam_user \
-    ttl=1800s \
     policy_document=-<<EOF
 {
   "Version": "2012-10-17",
