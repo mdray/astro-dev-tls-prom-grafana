@@ -1,0 +1,11 @@
+apache-airflow-providers-databricks==3.1.0
+apache-airflow-providers-microsoft-azure==4.1.0
+apache-airflow-providers-microsoft-mssql==3.2.0
+apache-airflow-providers-sftp==4.1.0
+azure-storage-blob
+astronomer-providers
+apache-airflow-providers-snowflake==3.3.0
+apache-airflow-providers-slack==6.0.0
+astro-sdk-python
+slack_sdk
+apache-airflow-providers-snowflake==3.3.0
