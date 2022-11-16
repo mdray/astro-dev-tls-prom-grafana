@@ -55,9 +55,11 @@ EOF
 
 astro dev start
 
+# Tune for higher concurrency
 # Raise Postgresql max_conn from 100 to 1000
 pgcontainer=$(docker ps | grep $ASTRODIR | grep postgres | cut -f1 -d' ')
 docker exec -it $pgcontainer sed -i 's/max_connections = .*/max_connections = 1000/' /var/lib/postgresql/data/postgresql.conf
+docker container update --memory 16g --memory-swap 18g  $(docker ps | grep scheduler-1 | awk '{print $1}')
 
 cd ..
 
@@ -112,5 +114,5 @@ docker run -d \
 
 vault/setup.sh
 
-cd $ASTRODIR && astro dev restart && cd -
+cd $ASTRODIR && astro dev restart
 

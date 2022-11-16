@@ -33,9 +33,6 @@ vault write aws/config/root \
     secret_key=$AWS_SECRET_ACCESS_KEY \
     region=$AWS_DEFAULT_REGION
 
-# role: airflow-sagemaker
-
-
 vault write aws/roles/airflow-dev-role \
     credential_type=iam_user \
     ttl=1800s \

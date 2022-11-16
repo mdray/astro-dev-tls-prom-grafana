@@ -16,8 +16,8 @@ from airflow.decorators import dag, task # DAG and task decorators for interfaci
     # run will be for the next 30 mins, per the schedule_interval
     catchup=False,
     default_args={
-        "retries": 0, # If a task fails, it will retry 2 times.
-        "owner": "jmartinson@astronomer.io",
+        "retries": 0,
+        "owner": "jacob.martinson@astronomer.io",
     },
     tags=['ETL']) # If set, this tag is shown in the DAG view of the Airflow UI
 def simple_etl_dag():
