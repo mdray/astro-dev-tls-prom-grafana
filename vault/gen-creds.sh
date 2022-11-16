@@ -43,7 +43,7 @@ echo Adding dynamic credentials to ${astro_envfile}:
 # access key must be url encoded in airflow conn var
 # https://airflow.apache.org/docs/apache-airflow-providers-amazon/stable/connections/aws.html#examples
 usecret=$(printf %s "$secret_key" | jq -sRr @uri)
-# echo AIRFLOW_CONN_AWS_DEFAULT=aws://${access_key}:$(base64 <<< $secret_key)@/region_name=${AWS_DEFAULT_REGION} >> $astro_envfile
+
 echo AIRFLOW_CONN_AWS_DEFAULT=aws://${access_key}:${usecret}@/region_name=${AWS_DEFAULT_REGION} >> $astro_envfile
 echo AIRFLOW_CONN_AWS_SAGEMAKER=aws://${access_key}:${usecret}@/region_name=${AWS_DEFAULT_REGION} >> $astro_envfile
 echo AWS_ACCESS_KEY_ID=${access_key} >> $astro_envfile

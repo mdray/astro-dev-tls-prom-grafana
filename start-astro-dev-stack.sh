@@ -7,21 +7,6 @@ if [ -z ${ASTRODIR} ]; then
   exit 1
 fi
 
-
-
-cat > prometheus.yml <<EOF
-global:
-    scrape_interval: 10s
-    evaluation_interval: 10s
-    scrape_timeout: 10s
-    external_labels:
-        monitor: 'astro-dev'
-scrape_configs:
-  - job_name: 'airflow-statsd-exporter'
-    static_configs:
-      - targets: ['statsd:9102']
-EOF
-
 echo Starting Astro dev environment
 set -e
 if [ -d $ASTRODIR ]; then
