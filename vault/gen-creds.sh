@@ -1,22 +1,11 @@
 #!/bin/bash
 
-if [ -z "$AWS_ACCESS_KEY_ID" ]; then echo "Missing AWS_ACCESS_KEY_ID in environment"; FAIL=true; fi
-if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then echo "Missing AWS_SECRET_ACCESS_KEY in environment"; FAIL=true; fi
-if [ -z "$AWS_DEFAULT_REGION" ]; then echo "Missing AWS_DEFAULT_REGION in environment"; FAIL=true; fi
-
-if [ ! -z "$FAIL" ]; then exit 1; fi
-
 if [ -z "$VAULT_ADDR" ]; then 
   export VAULT_ADDR=https://localhost.cosmic-security.net:8200/ 
 fi
 
 if [ -z "$VAULT_TOKEN" ]; then 
   export VAULT_TOKEN=root
-fi
-
-
-if [ -z "$VAULT_AWS_CREDS_TTL" ]; then 
-  export VAULT_AWS_CREDS_TTL=1800s
 fi
 
 set -e

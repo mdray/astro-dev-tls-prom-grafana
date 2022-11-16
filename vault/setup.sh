@@ -16,7 +16,7 @@ fi
 
 
 if [ -z "$VAULT_AWS_CREDS_TTL" ]; then 
-  export VAULT_AWS_CREDS_TTL=1800s
+  export VAULT_AWS_CREDS_TTL=7200s
 fi
 
 set -e
