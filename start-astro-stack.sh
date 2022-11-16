@@ -7,8 +7,7 @@ if [ -z ${ASTRODIR} ]; then
   exit 1
 fi
 
-echo Starting Astro dev environment
-set -e
+
 
 cat > prometheus.yml <<EOF
 global:
@@ -23,11 +22,18 @@ scrape_configs:
       - targets: ['statsd:9102']
 EOF
 
+echo Starting Astro dev environment
+set -e
+if [ -d $ASTRODIR ]; then
+  mv -v $ASTRODIR .bak.${ASTRODIR}.$(date +%Y.%m.%d-%H.%M.%S)
+fi
 mkdir -p $ASTRODIR
 cd $ASTRODIR
 astro dev init
 
-cp ../simple_wide_dag.py dags
+cp -v ../content/*.py dags
+cp -v ../content/airflow_settings.yaml .
+cp -v ../content/requirements.txt .
 
 cat > .env <<EOF
 AIRFLOW__METRICS__STATSD_ON=True
@@ -40,13 +46,18 @@ AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
 AIRFLOW__CORE__PARALLELISM=128
 AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG=128
 
+AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL=10
+
+AIRFLOW__CORE__ENABLE_XCOM_PICKLING=True
+AWS_DEFAULT_REGION=us-east-2
+
 EOF
 
 astro dev start
 
-# Raise Postgresql max_conn from 100 to 200
+# Raise Postgresql max_conn from 100 to 1000
 pgcontainer=$(docker ps | grep $ASTRODIR | grep postgres | cut -f1 -d' ')
-docker exec -it $pgcontainer sed -i 's/max_connections = 100/max_connections = 200/' /var/lib/postgresql/data/postgresql.conf
+docker exec -it $pgcontainer sed -i 's/max_connections = .*/max_connections = 1000/' /var/lib/postgresql/data/postgresql.conf
 
 cd ..
 
@@ -79,10 +90,27 @@ docker run -d -p 3000:3000 \
   -v $PWD/grafana:/etc/grafana \
   grafana/grafana-oss 
 
+docker run -d \
+  --restart unless-stopped \
+  --network $network \
+  --name vault \
+  --cap-add=IPC_LOCK \
+  -e 'VAULT_DEV_ROOT_TOKEN_ID=root' \
+  vault
+
 sed "s/AIRFLOW-WEBSERVER/$webserver/" < nginx/nginx.conf.template > nginx/nginx.conf
-docker run -d -p 80:80 -p 3443:3443 -p 8443:8443 \
+docker run -d \
+  -p 80:80 \
+  -p 3443:3443 \
+  -p 8200:8200 \
+  -p 8443:8443 \
   --restart unless-stopped \
   --network $network \
   --name nginx \
   -v $PWD/nginx:/etc/nginx/ \
   nginx 
+
+vault/setup.sh
+
+cd $ASTRODIR && astro dev restart && cd -
+
