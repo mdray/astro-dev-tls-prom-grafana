@@ -43,6 +43,7 @@ with DAG('sagemaker_pipeline',
          default_args={
              'retries': 0,
              'retry_delay': timedelta(minutes=1),
+             "owner": "jacob.martinson@astronomer.io",
          },
          catchup=False,
          ) as dag:
