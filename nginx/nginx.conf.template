@@ -48,7 +48,7 @@ http {
     }
 
     server {
-        listen 8200 ssl;
+        listen 8201 ssl;
         server_name localhost;
 
         ssl_certificate /etc/nginx/fullchain.pem;

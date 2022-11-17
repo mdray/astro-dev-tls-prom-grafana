@@ -6,9 +6,8 @@ if [ -z "$AWS_DEFAULT_REGION" ]; then echo "Missing AWS_DEFAULT_REGION in enviro
 
 if [ ! -z "$FAIL" ]; then exit 1; fi
 
-if [ -z "$VAULT_ADDR" ]; then 
-  export VAULT_ADDR=http://localhost:8200/ 
-fi
+export VAULT_ADDR=http://localhost:8200/
+
 
 if [ -z "$VAULT_TOKEN" ]; then 
   export VAULT_TOKEN=root
@@ -34,8 +33,8 @@ vault write aws/config/root \
     region=$AWS_DEFAULT_REGION
 
 vault write aws/config/lease \
-  lease=60m \
-  lease_max=3h
+  lease=$VAULT_AWS_CREDS_TTL \
+  lease_max=$VAULT_AWS_CREDS_TTL
 
 vault write aws/roles/airflow-dev-role \
     credential_type=iam_user \

@@ -98,7 +98,7 @@ sed "s/AIRFLOW-WEBSERVER/$webserver/" < nginx/nginx.conf.template > nginx/nginx.
 docker run -d \
   -p 80:80 \
   -p 3443:3443 \
-  -p 8200:8200 \
+  -p 8201:8200 \
   -p 8443:8443 \
   --restart unless-stopped \
   --network $network \
