@@ -8,7 +8,12 @@ if [ -z ${ASTRODIR} ]; then
 fi
 
 echo; echo Pulling required docker images; echo
-
+docker pull quay.io/astronomer/astro-runtime
+docker pull quay.io/astronomer/ap-statsd-exporter
+docker pull prom/prometheus
+docker pull grafana/grafana-oss
+docker pull vault
+docker pull nginx
 
 
 echo Starting Astro dev environment
