@@ -7,6 +7,10 @@ if [ -z ${ASTRODIR} ]; then
   exit 1
 fi
 
+echo; echo Pulling required docker images; echo
+
+
+
 echo Starting Astro dev environment
 set -e
 if [ -d $ASTRODIR ]; then
