@@ -8,7 +8,6 @@ if [ -z ${ASTRODIR} ]; then
 fi
 
 echo; echo Pulling required docker images; echo
-docker pull quay.io/astronomer/astro-runtime
 docker pull quay.io/astronomer/ap-statsd-exporter
 docker pull prom/prometheus
 docker pull grafana/grafana-oss
@@ -87,6 +86,7 @@ docker run -d -p 3000:3000 \
   grafana/grafana-oss 
 
 docker run -d \
+  -p 8200:8200 \
   --restart unless-stopped \
   --network $network \
   --name vault \
@@ -106,6 +106,7 @@ docker run -d \
   -v $PWD/nginx:/etc/nginx/ \
   nginx 
 
+sleep 2
 vault/setup.sh
 
 cd $ASTRODIR && astro dev restart

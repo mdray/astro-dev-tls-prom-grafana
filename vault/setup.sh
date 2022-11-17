@@ -7,7 +7,7 @@ if [ -z "$AWS_DEFAULT_REGION" ]; then echo "Missing AWS_DEFAULT_REGION in enviro
 if [ ! -z "$FAIL" ]; then exit 1; fi
 
 if [ -z "$VAULT_ADDR" ]; then 
-  export VAULT_ADDR=https://localhost.cosmic-security.net:8200/ 
+  export VAULT_ADDR=http://localhost:8200/ 
 fi
 
 if [ -z "$VAULT_TOKEN" ]; then 
