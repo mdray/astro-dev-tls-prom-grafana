@@ -28,8 +28,6 @@ rm -fr $ASTRODIR
 
 ./start-astro-dev-stack.sh
 
-# mkdir -p $ASTRODIR && cd $ASTRODIR && astro dev restart && cd -
-
 # # grafana https
 # www-browser https://localhost.cosmic-security.net:3443/
 
