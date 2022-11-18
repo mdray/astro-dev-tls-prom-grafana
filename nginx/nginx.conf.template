@@ -73,8 +73,8 @@ http {
     }
 
     server {
-        listen 8443 ssl;
-        server_name localhost.cosmic-security.net;
+        listen 443 ssl;
+        server_name localhost;
 
         ssl_certificate /etc/nginx/fullchain.pem;
         ssl_certificate_key /etc/nginx/privkey.pem;
@@ -83,6 +83,7 @@ http {
             proxy_pass         http://airflow;
             proxy_redirect     http://localhost:8000/ https://$host:$server_port/;
             proxy_redirect     http://localhost/ https://$host:$server_port/;
+            proxy_redirect     http://$proxy_host/home https://$host:$server_port/home;
             proxy_http_version 1.1;
             proxy_cache_bypass $http_upgrade;
             proxy_set_header   Upgrade $http_upgrade;
