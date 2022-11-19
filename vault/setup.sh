@@ -4,10 +4,16 @@ if [ -z "$AWS_ACCESS_KEY_ID" ]; then echo "Missing AWS_ACCESS_KEY_ID in environm
 if [ -z "$AWS_SECRET_ACCESS_KEY" ]; then echo "Missing AWS_SECRET_ACCESS_KEY in environment"; FAIL=true; fi
 if [ -z "$AWS_DEFAULT_REGION" ]; then echo "Missing AWS_DEFAULT_REGION in environment"; FAIL=true; fi
 
-if [ ! -z "$FAIL" ]; then exit 1; fi
+if [ ! -z "$FAIL" ]; then 
+  echo "Not configuring Vault secrets."
+  exit 1
+fi
 
 export VAULT_ADDR=http://localhost:8200/
-
+until vault status >/dev/null; do 
+  echo "waiting for Vault to become available at $VAULT_ADDR"
+  sleep 0.5
+done
 
 if [ -z "$VAULT_TOKEN" ]; then 
   export VAULT_TOKEN=root

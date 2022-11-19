@@ -7,6 +7,12 @@ if [ -z ${ASTRODIR} ]; then
   exit 1
 fi
 
+# Limit the scheduler to a percentage of system memory. Important for load tests.
+# Expressed as a float between 0 and 1.
+if [ -z ${SCHEDULER_MEM_PERCENT} ]; then
+  export SCHEDULER_MEM_PERCENT=0.75
+fi
+
 echo; echo Pulling required docker images; echo
 docker pull quay.io/astronomer/ap-statsd-exporter
 docker pull prom/prometheus
@@ -15,7 +21,7 @@ docker pull vault
 docker pull nginx
 
 
-echo Starting Astro dev environment
+echo Starting initial Astro dev environment
 set -e
 if [ -d $ASTRODIR ]; then
   mv -v $ASTRODIR .bak.${ASTRODIR}.$(date +%Y.%m.%d-%H.%M.%S)
@@ -52,7 +58,11 @@ astro dev start
 # Raise Postgresql max_conn from 100 to 1000
 pgcontainer=$(docker ps | grep $ASTRODIR | grep postgres | cut -f1 -d' ')
 docker exec -it $pgcontainer sed -i 's/max_connections = .*/max_connections = 1000/' /var/lib/postgresql/data/postgresql.conf
-docker container update --memory 16g --memory-swap 18g  $(docker ps | grep scheduler-1 | awk '{print $1}')
+
+scheduler_ram_k=$(printf "%.0fk\n" $(echo "$(head -n1 /proc/meminfo | awk '{print $2}')  * $SCHEDULER_MEM_PERCENT " | bc))
+scheduler_swap_k=$(printf "%ik" $(head -n1 /proc/meminfo | awk '{print $2}'))
+
+docker container update --memory $scheduler_ram_k --memory-swap $scheduler_swap_k  $(docker ps | grep scheduler-1 | awk '{print $1}')
 
 cd ..
 
@@ -97,6 +107,7 @@ docker run -d \
 sed "s/AIRFLOW-WEBSERVER/$webserver/" < nginx/nginx.conf.template > nginx/nginx.conf
 docker run -d \
   -p 80:80 \
+  -p 443:443 \
   -p 3443:3443 \
   -p 8201:8201 \
   -p 8443:8443 \
@@ -106,7 +117,8 @@ docker run -d \
   -v $PWD/nginx:/etc/nginx/ \
   nginx 
 
-sleep 2
+
+set +e
 vault/setup.sh
 
 cd $ASTRODIR && astro dev restart
