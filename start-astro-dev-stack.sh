@@ -14,12 +14,11 @@ if [ -z ${SCHEDULER_MEM_PERCENT} ]; then
 fi
 
 echo; echo Pulling required docker images; echo
-docker pull quay.io/astronomer/ap-statsd-exporter
-docker pull prom/prometheus
-docker pull grafana/grafana-oss
-docker pull vault
-docker pull nginx
-
+docker pull quay.io/astronomer/ap-statsd-exporter &
+docker pull prom/prometheus &
+docker pull grafana/grafana-oss &
+docker pull vault &
+docker pull nginx &
 
 echo Starting initial Astro dev environment
 set -e
@@ -52,6 +51,8 @@ AWS_DEFAULT_REGION=us-east-2
 
 EOF
 
+wait
+
 astro dev start
 
 # Tune for higher concurrency
@@ -64,13 +65,14 @@ scheduler_swap_k=$(printf "%ik" $(head -n1 /proc/meminfo | awk '{print $2}'))
 
 docker container update --memory $scheduler_ram_k --memory-swap $scheduler_swap_k  $(docker ps | grep scheduler-1 | awk '{print $1}')
 
-cd ..
-
 # network=$(docker inspect $(docker ps | grep scheduler | cut -f1 -d' ') -f "{{json .NetworkSettings.Networks }}" | jq -r '.[] | .NetworkID' )
 
 network=$(docker inspect $(docker ps --format {{.Names}} | grep $ASTRODIR | grep scheduler-)  -f "{{json .NetworkSettings.Networks }}" | jq -M -r '.[] | .NetworkID')
-webserver=$(docker ps --format {{.Names}} | grep webserver-)
+webserver=$(docker ps --format {{.Names}} | grep $ASTRODIR | grep webserver-)
 
+astro dev stop &
+
+cd ..
 
 docker run -d --name statsd \
   --restart unless-stopped \
@@ -78,7 +80,7 @@ docker run -d --name statsd \
   -p 9102:9102/tcp \
   -p 9125:9125/tcp \
   -p 9125:9125/udp \
-  quay.io/astronomer/ap-statsd-exporter
+  quay.io/astronomer/ap-statsd-exporter &
 
 docker run -d \
   --restart unless-stopped \
@@ -86,14 +88,14 @@ docker run -d \
   --name prom \
   -p 9090:9090 \
   -v $PWD/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml \
-  prom/prometheus
+  prom/prometheus &
 
 docker run -d -p 3000:3000 \
   --restart unless-stopped \
   --network $network \
   --name grafana \
   -v $PWD/grafana:/etc/grafana \
-  grafana/grafana-oss 
+  grafana/grafana-oss & 
 
 docker run -d \
   -p 8200:8200 \
@@ -102,7 +104,7 @@ docker run -d \
   --name vault \
   --cap-add=IPC_LOCK \
   -e 'VAULT_DEV_ROOT_TOKEN_ID=root' \
-  vault
+  vault &
 
 sed "s/AIRFLOW-WEBSERVER/$webserver/" < nginx/nginx.conf.template > nginx/nginx.conf
 docker run -d \
@@ -110,16 +112,18 @@ docker run -d \
   -p 443:443 \
   -p 3443:3443 \
   -p 8201:8201 \
-  -p 8443:8443 \
+  -p 443:443 \
   --restart unless-stopped \
   --network $network \
   --name nginx \
   -v $PWD/nginx:/etc/nginx/ \
-  nginx 
+  nginx &
+
+wait
 
 
 set +e
 vault/setup.sh
 
-cd $ASTRODIR && astro dev restart
+cd $ASTRODIR && astro dev start
 
