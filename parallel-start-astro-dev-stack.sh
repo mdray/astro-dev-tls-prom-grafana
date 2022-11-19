@@ -10,6 +10,7 @@ fi
 [ -f nginx/fullchain.pem ] || (echo '#'; echo "# WARNING: TLS proxy won't work without cert chain at 'nginx/fullchain.pem'"; echo '#')
 [ -f nginx/privkey.pem ] ||   (echo '#'; echo "# WARNING: TLS proxy won't work without private key at 'nginx/privkey.pem'"; echo '#')
 
+mkdir -p log
 
 # Limit the scheduler to a percentage of system memory. Important for load tests.
 # Expressed as a float between 0 and 1.
