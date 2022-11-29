@@ -20,7 +20,5 @@ airflow:
       pool_slot:
       pool_description:
   variables:
-    - variable_name: s3_bucket
-      variable_value: jm3-ml
-    - variable_name: role
-      variable_value: airflow-sagemaker
+    - variable_name: COUNT
+      variable_value: 100
