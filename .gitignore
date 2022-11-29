@@ -46,9 +46,6 @@ secret.tfvars
 terraform.rc
 tf.plan.out
 
-
-astro-dev
-
 nginx/nginx.conf
 
 
