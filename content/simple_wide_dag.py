@@ -1,6 +1,7 @@
 from datetime import datetime,timedelta
 from airflow import DAG
-from airflow.operators.bash import BashOperator, DummyOperator
+from airflow.operators.bash import BashOperator
+from airflow.operators.dummy_operator import DummyOperator
 from airflow.models import Variable
 
 for n in range(10):
@@ -15,6 +16,6 @@ for n in range(10):
     ):
         COUNT = int(Variable.get("COUNT"))
         for i in range(int(COUNT)):
-            t = DummyOperator()
+            t = DummyOperator(task_id=str(i).zfill(4))
 
 

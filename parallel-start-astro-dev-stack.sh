@@ -15,7 +15,7 @@ mkdir -p log
 # Limit the scheduler to a percentage of system memory. Important for load tests.
 # Expressed as a float between 0 and 1.
 if [ -z ${SCHEDULER_MEM_PERCENT} ]; then
-  export SCHEDULER_MEM_PERCENT=0.75
+  export SCHEDULER_MEM_PERCENT=0.80
 fi
 
 echo
@@ -58,8 +58,8 @@ AIRFLOW__METRICS__STATSD_PREFIX=airflow
 
 AIRFLOW__WEBSERVER__EXPOSE_CONFIG=True
 
-AIRFLOW__CORE__PARALLELISM=128
-AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG=128
+AIRFLOW__CORE__PARALLELISM=1000
+AIRFLOW__CORE__MAX_ACTIVE_TASKS_PER_DAG=1000
 
 AIRFLOW__SCHEDULER__DAG_DIR_LIST_INTERVAL=10
 
@@ -178,7 +178,17 @@ echo '##########################################################################
 echo 'Restarting Astro.'
 
 cd $ASTRODIR && astro dev stop
-astro dev start -n
+
+LN=04
+astro dev start -n >../log/$LN.astro.dev.start.out 2>../log/$LN.astro.dev.start.err &
+PID_ASTRO_START=$!
+cd ..
+
+# Apply scheduler memory limits
+until (docker ps | grep $ASTRODIR | grep scheduler >/dev/null); do sleep 0.5; done
+docker container update --memory $scheduler_ram_k --memory-swap $scheduler_swap_k  $(docker ps | grep scheduler-1 | awk '{print $1}')
+
+wait
 
 echo
 echo "Airflow:          http://localhost.${DOMAIN}:8080/"
