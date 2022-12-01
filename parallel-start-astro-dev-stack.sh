@@ -191,10 +191,10 @@ docker container update --memory $scheduler_ram_k --memory-swap $scheduler_swap_
 wait
 
 echo
-echo "Airflow:          http://localhost.${DOMAIN}:8080/"
-echo "Airflow TLS:      https://localhost.${DOMAIN}/"
-echo "Grafana:          http://localhost.${DOMAIN}:3000/"
-echo "Grafana TLS:      https://localhost.${DOMAIN}:3443/"
-echo "Vault:            http://localhost.${DOMAIN}:8200/"
-echo "Vault TLS:        https://localhost.${DOMAIN}:8201/"
+echo "Airflow:          http://${NODENAME}.${DOMAIN}:8080/"
+echo "Airflow TLS:      https://${NODENAME}.${DOMAIN}/"
+echo "Grafana:          http://${NODENAME}.${DOMAIN}:3000/"
+echo "Grafana TLS:      https://${NODENAME}.${DOMAIN}:3443/"
+echo "Vault:            http://${NODENAME}.${DOMAIN}:8200/"
+echo "Vault TLS:        https://${NODENAME}.${DOMAIN}:8201/"
 echo

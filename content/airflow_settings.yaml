@@ -21,4 +21,6 @@ airflow:
       pool_description:
   variables:
     - variable_name: COUNT
-      variable_value: 5000
+      variable_value: 1000
+    - variable_name: COUNT_PYTHON
+      variable_value: 1000
