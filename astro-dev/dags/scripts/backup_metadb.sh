@@ -9,4 +9,11 @@ ccencrypt -K password ${DUMPFILE}.zst
 
 ls -lh /tmp/pg.*
 
+echo b2 bucket info - $B2BUCKET $B2KEYID
+set +x
+backblaze-b2 authorize-account $B2KEYID $B2KEYSECRET
+
+set -x
+backblaze-b2 upload-file --noProgress $B2BUCKET ${DUMPFILE}.zst.cpt ${DUMPFILE}.zst.cpt 
+
 exit 0
