@@ -21,6 +21,8 @@ for n in range(10):
             @task(task_id="python_" + str(n).zfill(3))
             def pytask(msg=None, parent=None, **kwargs):
                 """Print the Airflow context and ds variable from the context."""
+                x = 2**32
+                print(x)
                 return msg
             this_task = pytask(msg=f'hello flat earth {i}', parent=parent)
             if parent:
