@@ -5,7 +5,10 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.models import Variable
 from airflow.decorators import dag, task # DAG and task decorators for interfacing with the TaskFlow API
 
-for n in range(10):
+
+# DAG_COUNT = int(Variable.get("DAG_COUNT"))
+
+for n in range(20):
     with DAG(
         "simple_wide_python_" + str(n).zfill(3),
         schedule_interval=timedelta(seconds=60),
