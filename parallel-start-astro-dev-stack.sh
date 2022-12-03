@@ -32,10 +32,12 @@ docker pull nginx >log/$LN.docker.pull.nginx.out 2>log/$LN.docker.pull.nginx.err
 
 set -e
 if [ -d $ASTRODIR ]; then
-  bakdir=.bak.${ASTRODIR}.$(date +%Y.%m.%d-%H.%M.%S)
+  mkdir .bak
+  bakdir=bak.${ASTRODIR}.$(date +%Y.%m.%d-%H.%M.%S)
   mv $ASTRODIR $bakdir
   echo Backing up existing dev directory to $bakdir.tbz2
   tar -cjf $bakdir.tbz2 $bakdir
+  mv $bakdir.tbz2 .bak
   rm -fr $bakdir
 fi
 
