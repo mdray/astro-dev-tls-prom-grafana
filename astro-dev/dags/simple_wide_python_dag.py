@@ -6,9 +6,9 @@ from airflow.models import Variable
 from airflow.decorators import dag, task # DAG and task decorators for interfacing with the TaskFlow API
 
 
-# DAG_COUNT = int(Variable.get("DAG_COUNT"))
+DAG_COUNT = int(Variable.get("DAG_COUNT"))
 
-for n in range(20):
+for n in range(DAG_COUNT):
     with DAG(
         "simple_wide_python_" + str(n).zfill(3),
         schedule_interval=timedelta(seconds=60),
