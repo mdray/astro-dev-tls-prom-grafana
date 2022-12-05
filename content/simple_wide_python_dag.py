@@ -5,7 +5,10 @@ from airflow.operators.dummy_operator import DummyOperator
 from airflow.models import Variable
 from airflow.decorators import dag, task # DAG and task decorators for interfacing with the TaskFlow API
 
-for n in range(10):
+
+DAG_COUNT = int(Variable.get("DAG_COUNT"))
+
+for n in range(DAG_COUNT):
     with DAG(
         "simple_wide_python_" + str(n).zfill(3),
         schedule_interval=timedelta(seconds=60),
@@ -21,6 +24,8 @@ for n in range(10):
             @task(task_id="python_" + str(n).zfill(3))
             def pytask(msg=None, parent=None, **kwargs):
                 """Print the Airflow context and ds variable from the context."""
+                x = 2**32
+                print(x)
                 return msg
             this_task = pytask(msg=f'hello flat earth {i}', parent=parent)
             if parent:
